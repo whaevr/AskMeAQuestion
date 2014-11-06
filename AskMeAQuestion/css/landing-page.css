@@ -35,6 +35,24 @@ h6 {
    
 }
 
+.btn {
+    display: none;
+}
+
+@media (max-width:400px) {
+    .btn {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .list-unstyled .btn {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+}
+
 .intro-message {
     position: relative;
     padding-top: 20%;
