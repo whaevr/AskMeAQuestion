@@ -11,8 +11,13 @@
 
 @Html.HiddenFor(x => Model.UserId)
 <h4>Course Searcher</h4>
-@Html.DropDownListFor(x => x.CourseAdded, new SelectList(Model.Courses, "Value", "Text"), "--Select Class--", null)
-<button type="submit" class="btn btn-default">Add Course</button>
+ <div class="row">
+         <div class="col-md-2">
+             @Html.DropDownListFor(x => x.CourseAdded, new SelectList(Model.Courses, "Value", "Text"), "--Select Class--", new { @class = "form-control" })
+             <button type="submit" class="btn btn-default">Add Course</button>
+         </div>
+ </div>
+
 }
 @if (Model.UserRole == "2" || Model.UserRole == "Admin")
 {

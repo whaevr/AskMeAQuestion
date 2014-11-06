@@ -12,7 +12,7 @@
         {
             if (student.Status != "Professor")
             {
-                <li class="list-group-item"><i class="glyphicon glyphicon-remove" onclick="return confirm('Are you sure you want to remove this student?')"></i> @student.Name (@student.StudentId)</li>
+                <li class="list-group-item"><i class="glyphicon glyphicon-remove"></i> @student.Name (@student.StudentId)</li>
             }
         }
     </ul>
@@ -28,19 +28,23 @@ else
 
         $(".glyphicon-remove").click(function () {
 
-            var studentId = $(this).parent().text().split("(")[1].split(")")[0];
-            var student = $(this).parent();
-            $.ajax({
-                url: '@Url.Action("RemoveUser", "Home", new { area = "" })',
-                type: 'GET',
-                data: { courseId: '@Model.First().CourseId', studentId: studentId },
-                success: function (data) {
-                    student.fadeOut();
-                },
-                error: function (data) {
-                    alert("Error finding Student.");
-                }
-            });
+            var r = confirm("Are you sure you want to delete this student?");
+
+            if (r == true) {
+                var studentId = $(this).parent().text().split("(")[1].split(")")[0];
+                var student = $(this).parent();
+                $.ajax({
+                    url: '@Url.Action("RemoveUser", "Home", new { area = "" })',
+                    type: 'GET',
+                    data: { courseId: '@Model.First().CourseId', studentId: studentId },
+                    success: function (data) {
+                        student.fadeOut();
+                    },
+                    error: function (data) {
+                        alert("Error finding Student.");
+                    }
+                });
+            }
         });
         $(".glyphicon-remove").popover({ trigger: "hover" })
     });
