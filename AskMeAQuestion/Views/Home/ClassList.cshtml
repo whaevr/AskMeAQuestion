@@ -1,0 +1,47 @@
+﻿@model List<AskMeAQuestion.ViewModels.ClassListViewModel>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@Model.First().CourseDesignator Class List</h2>
+
+@if (Model.Count() > 0)
+{
+    <ul class="list-group">
+        @foreach (var student in Model)
+        {
+            if (student.Status != "Professor")
+            {
+                <li class="list-group-item"><i class="glyphicon glyphicon-remove" onclick="return confirm('Are you sure you want to remove this student?')"></i> @student.Name (@student.StudentId)</li>
+            }
+        }
+    </ul>
+}
+else
+{
+    <p>No one is registered for this class at this time.</p>
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $(".glyphicon-remove").click(function () {
+
+            var studentId = $(this).parent().text().split("(")[1].split(")")[0];
+            var student = $(this).parent();
+            $.ajax({
+                url: '@Url.Action("RemoveUser", "Home", new { area = "" })',
+                type: 'GET',
+                data: { courseId: '@Model.First().CourseId', studentId: studentId },
+                success: function (data) {
+                    student.fadeOut();
+                },
+                error: function (data) {
+                    alert("Error finding Student.");
+                }
+            });
+        });
+        $(".glyphicon-remove").popover({ trigger: "hover" })
+    });
+</script>

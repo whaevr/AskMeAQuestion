@@ -1,0 +1,62 @@
+﻿@model AskMeAQuestion.ViewModels.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/css/landing-page.css" rel="stylesheet">
+<style>
+    li {
+        padding: 8px;
+    }
+
+    input {
+        color: black;
+    }
+
+    a {
+        font-style: italic;
+        color: lawngreen;
+    }
+</style>
+
+<br />
+
+@using (Html.BeginForm("Register", "Home", FormMethod.Post, new { enctype = "multi-part/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="intro-header">
+        <div class="container">
+            <fieldset>
+                <div class="control-group intro-message">
+                    <!-- Username -->
+                    <label class="control-label">@Html.DisplayNameFor(x => x.UserName)</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(x => x.UserName, new { @class = "input-xlarge" })
+                        @Html.ValidationMessageFor(x => x.UserName)
+                        <p class="help-block">Username can contain any letters or numbers, without spaces</p>
+                    </div>
+                </div>
+                            
+            </fieldset>
+        </div>
+    </div>
+
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var errorMessage = '@Html.Raw(HttpUtility.JavaScriptStringEncode((string)TempData["ErrorMessage"]))';
+
+        if (errorMessage != "") {
+            alert(errorMessage);
+        }
+
+    });
+
+
+</script>
+
+

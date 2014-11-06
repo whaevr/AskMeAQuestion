@@ -1,0 +1,416 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="simmo2jjModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Accounts">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="FirstName" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="LastName" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Password" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Role" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Status" Type="varchar" MaxLength="10" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ClassList">
+          <Key>
+            <PropertyRef Name="CourseId" />
+            <PropertyRef Name="StudentId" />
+          </Key>
+          <Property Name="CourseId" Type="int" Nullable="false" />
+          <Property Name="StudentId" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Status" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="Course">
+          <Key>
+            <PropertyRef Name="SectionId" />
+          </Key>
+          <Property Name="SectionId" Type="int" Nullable="false" />
+          <Property Name="CourseDesignator" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="CourseName" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="ProfessorId" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Status" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="Question">
+          <Key>
+            <PropertyRef Name="QuestionId" />
+          </Key>
+          <Property Name="QuestionId" Type="int" Nullable="false" />
+          <Property Name="Question" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="Submitter" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Time" Type="datetime" Nullable="false" />
+          <Property Name="SessionId" Type="int" Nullable="false" />
+          <Property Name="Status" Type="varchar" MaxLength="10" />
+          <Property Name="Upvotes" Type="int" />
+        </EntityType>
+        <EntityType Name="Session">
+          <Key>
+            <PropertyRef Name="SessionId" />
+          </Key>
+          <Property Name="SessionId" Type="int" Nullable="false" />
+          <Property Name="CourseId" Type="int" Nullable="false" />
+          <Property Name="AnonOn" Type="bit" />
+          <Property Name="Date" Type="date" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_ClassList_Accounts">
+          <End Role="Accounts" Type="Self.Accounts" Multiplicity="1" />
+          <End Role="ClassList" Type="Self.ClassList" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Accounts">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="ClassList">
+              <PropertyRef Name="StudentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ClassList_Course">
+          <End Role="Course" Type="Self.Course" Multiplicity="1" />
+          <End Role="ClassList" Type="Self.ClassList" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Course">
+              <PropertyRef Name="SectionId" />
+            </Principal>
+            <Dependent Role="ClassList">
+              <PropertyRef Name="CourseId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Course_Accounts">
+          <End Role="Accounts" Type="Self.Accounts" Multiplicity="1" />
+          <End Role="Course" Type="Self.Course" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Accounts">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="Course">
+              <PropertyRef Name="ProfessorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Question_Accounts">
+          <End Role="Accounts" Type="Self.Accounts" Multiplicity="1" />
+          <End Role="Question" Type="Self.Question" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Accounts">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="Question">
+              <PropertyRef Name="Submitter" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Question_Session">
+          <End Role="Session" Type="Self.Session" Multiplicity="1" />
+          <End Role="Question" Type="Self.Question" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Session">
+              <PropertyRef Name="SessionId" />
+            </Principal>
+            <Dependent Role="Question">
+              <PropertyRef Name="SessionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Session_Course">
+          <End Role="Course" Type="Self.Course" Multiplicity="1" />
+          <End Role="Session" Type="Self.Session" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Course">
+              <PropertyRef Name="SectionId" />
+            </Principal>
+            <Dependent Role="Session">
+              <PropertyRef Name="CourseId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="simmo2jjModelStoreContainer">
+          <EntitySet Name="Accounts" EntityType="Self.Accounts" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ClassList" EntityType="Self.ClassList" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Course" EntityType="Self.Course" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Question" EntityType="Self.Question" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Session" EntityType="Self.Session" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_ClassList_Accounts" Association="Self.FK_ClassList_Accounts">
+            <End Role="Accounts" EntitySet="Accounts" />
+            <End Role="ClassList" EntitySet="ClassList" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ClassList_Course" Association="Self.FK_ClassList_Course">
+            <End Role="Course" EntitySet="Course" />
+            <End Role="ClassList" EntitySet="ClassList" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Course_Accounts" Association="Self.FK_Course_Accounts">
+            <End Role="Accounts" EntitySet="Accounts" />
+            <End Role="Course" EntitySet="Course" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Question_Accounts" Association="Self.FK_Question_Accounts">
+            <End Role="Accounts" EntitySet="Accounts" />
+            <End Role="Question" EntitySet="Question" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Question_Session" Association="Self.FK_Question_Session">
+            <End Role="Session" EntitySet="Session" />
+            <End Role="Question" EntitySet="Question" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Session_Course" Association="Self.FK_Session_Course">
+            <End Role="Course" EntitySet="Course" />
+            <End Role="Session" EntitySet="Session" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="simmo2jjModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="AskMeAQuestionEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Accounts" EntityType="simmo2jjModel.Account" />
+          <EntitySet Name="ClassLists" EntityType="simmo2jjModel.ClassList" />
+          <EntitySet Name="Courses" EntityType="simmo2jjModel.Course" />
+          <EntitySet Name="Questions" EntityType="simmo2jjModel.Question" />
+          <EntitySet Name="Sessions" EntityType="simmo2jjModel.Session" />
+          <AssociationSet Name="FK_ClassList_Accounts" Association="simmo2jjModel.FK_ClassList_Accounts">
+            <End Role="Account" EntitySet="Accounts" />
+            <End Role="ClassList" EntitySet="ClassLists" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Course_Accounts" Association="simmo2jjModel.FK_Course_Accounts">
+            <End Role="Account" EntitySet="Accounts" />
+            <End Role="Course" EntitySet="Courses" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Question_Accounts" Association="simmo2jjModel.FK_Question_Accounts">
+            <End Role="Account" EntitySet="Accounts" />
+            <End Role="Question" EntitySet="Questions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ClassList_Course" Association="simmo2jjModel.FK_ClassList_Course">
+            <End Role="Course" EntitySet="Courses" />
+            <End Role="ClassList" EntitySet="ClassLists" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Session_Course" Association="simmo2jjModel.FK_Session_Course">
+            <End Role="Course" EntitySet="Courses" />
+            <End Role="Session" EntitySet="Sessions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Question_Session" Association="simmo2jjModel.FK_Question_Session">
+            <End Role="Session" EntitySet="Sessions" />
+            <End Role="Question" EntitySet="Questions" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Account">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Role" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="ClassLists" Relationship="simmo2jjModel.FK_ClassList_Accounts" FromRole="Account" ToRole="ClassList" />
+          <NavigationProperty Name="Courses" Relationship="simmo2jjModel.FK_Course_Accounts" FromRole="Account" ToRole="Course" />
+          <NavigationProperty Name="Questions" Relationship="simmo2jjModel.FK_Question_Accounts" FromRole="Account" ToRole="Question" />
+        </EntityType>
+        <EntityType Name="ClassList">
+          <Key>
+            <PropertyRef Name="CourseId" />
+            <PropertyRef Name="StudentId" />
+          </Key>
+          <Property Name="CourseId" Type="Int32" Nullable="false" />
+          <Property Name="StudentId" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Account" Relationship="simmo2jjModel.FK_ClassList_Accounts" FromRole="ClassList" ToRole="Account" />
+          <NavigationProperty Name="Course" Relationship="simmo2jjModel.FK_ClassList_Course" FromRole="ClassList" ToRole="Course" />
+        </EntityType>
+        <EntityType Name="Course">
+          <Key>
+            <PropertyRef Name="SectionId" />
+          </Key>
+          <Property Name="SectionId" Type="Int32" Nullable="false" />
+          <Property Name="CourseDesignator" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="CourseName" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="ProfessorId" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Account" Relationship="simmo2jjModel.FK_Course_Accounts" FromRole="Course" ToRole="Account" />
+          <NavigationProperty Name="ClassLists" Relationship="simmo2jjModel.FK_ClassList_Course" FromRole="Course" ToRole="ClassList" />
+          <NavigationProperty Name="Sessions" Relationship="simmo2jjModel.FK_Session_Course" FromRole="Course" ToRole="Session" />
+        </EntityType>
+        <EntityType Name="Question">
+          <Key>
+            <PropertyRef Name="QuestionId" />
+          </Key>
+          <Property Name="QuestionId" Type="Int32" Nullable="false" />
+          <Property Name="Question1" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Submitter" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Time" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="SessionId" Type="Int32" Nullable="false" />
+          <Property Name="Status" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Upvotes" Type="Int32" />
+          <NavigationProperty Name="Account" Relationship="simmo2jjModel.FK_Question_Accounts" FromRole="Question" ToRole="Account" />
+          <NavigationProperty Name="Session" Relationship="simmo2jjModel.FK_Question_Session" FromRole="Question" ToRole="Session" />
+        </EntityType>
+        <EntityType Name="Session">
+          <Key>
+            <PropertyRef Name="SessionId" />
+          </Key>
+          <Property Name="SessionId" Type="Int32" Nullable="false" />
+          <Property Name="CourseId" Type="Int32" Nullable="false" />
+          <Property Name="AnonOn" Type="Boolean" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
+          <NavigationProperty Name="Course" Relationship="simmo2jjModel.FK_Session_Course" FromRole="Session" ToRole="Course" />
+          <NavigationProperty Name="Questions" Relationship="simmo2jjModel.FK_Question_Session" FromRole="Session" ToRole="Question" />
+        </EntityType>
+        <Association Name="FK_ClassList_Accounts">
+          <End Type="simmo2jjModel.Account" Role="Account" Multiplicity="1" />
+          <End Type="simmo2jjModel.ClassList" Role="ClassList" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="ClassList">
+              <PropertyRef Name="StudentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Course_Accounts">
+          <End Type="simmo2jjModel.Account" Role="Account" Multiplicity="1" />
+          <End Type="simmo2jjModel.Course" Role="Course" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="Course">
+              <PropertyRef Name="ProfessorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Question_Accounts">
+          <End Type="simmo2jjModel.Account" Role="Account" Multiplicity="1" />
+          <End Type="simmo2jjModel.Question" Role="Question" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="Question">
+              <PropertyRef Name="Submitter" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ClassList_Course">
+          <End Type="simmo2jjModel.Course" Role="Course" Multiplicity="1" />
+          <End Type="simmo2jjModel.ClassList" Role="ClassList" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Course">
+              <PropertyRef Name="SectionId" />
+            </Principal>
+            <Dependent Role="ClassList">
+              <PropertyRef Name="CourseId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Session_Course">
+          <End Type="simmo2jjModel.Course" Role="Course" Multiplicity="1" />
+          <End Type="simmo2jjModel.Session" Role="Session" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Course">
+              <PropertyRef Name="SectionId" />
+            </Principal>
+            <Dependent Role="Session">
+              <PropertyRef Name="CourseId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Question_Session">
+          <End Type="simmo2jjModel.Session" Role="Session" Multiplicity="1" />
+          <End Type="simmo2jjModel.Question" Role="Question" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Session">
+              <PropertyRef Name="SessionId" />
+            </Principal>
+            <Dependent Role="Question">
+              <PropertyRef Name="SessionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="simmo2jjModelStoreContainer" CdmEntityContainer="AskMeAQuestionEntities">
+          <EntitySetMapping Name="Accounts">
+            <EntityTypeMapping TypeName="simmo2jjModel.Account">
+              <MappingFragment StoreEntitySet="Accounts">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ClassLists">
+            <EntityTypeMapping TypeName="simmo2jjModel.ClassList">
+              <MappingFragment StoreEntitySet="ClassList">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="StudentId" ColumnName="StudentId" />
+                <ScalarProperty Name="CourseId" ColumnName="CourseId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Courses">
+            <EntityTypeMapping TypeName="simmo2jjModel.Course">
+              <MappingFragment StoreEntitySet="Course">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="ProfessorId" ColumnName="ProfessorId" />
+                <ScalarProperty Name="CourseName" ColumnName="CourseName" />
+                <ScalarProperty Name="CourseDesignator" ColumnName="CourseDesignator" />
+                <ScalarProperty Name="SectionId" ColumnName="SectionId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Questions">
+            <EntityTypeMapping TypeName="simmo2jjModel.Question">
+              <MappingFragment StoreEntitySet="Question">
+                <ScalarProperty Name="Upvotes" ColumnName="Upvotes" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="SessionId" ColumnName="SessionId" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Submitter" ColumnName="Submitter" />
+                <ScalarProperty Name="Question1" ColumnName="Question" />
+                <ScalarProperty Name="QuestionId" ColumnName="QuestionId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Sessions">
+            <EntityTypeMapping TypeName="simmo2jjModel.Session">
+              <MappingFragment StoreEntitySet="Session">
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="AnonOn" ColumnName="AnonOn" />
+                <ScalarProperty Name="CourseId" ColumnName="CourseId" />
+                <ScalarProperty Name="SessionId" ColumnName="SessionId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

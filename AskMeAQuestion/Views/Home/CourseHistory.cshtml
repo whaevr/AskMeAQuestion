@@ -1,0 +1,39 @@
+﻿@model AskMeAQuestion.ViewModels.CourseViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@Model.CourseName Course History</h2>
+
+@if (Model.Sessions.Count() > 0)
+{
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    @foreach (var session in Model.Sessions)
+    {
+        if (session.Questions.Count() > 0)
+        {
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="@session.SessionId">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="@session.SessionId" aria-expanded="true" aria-controls="@session.SessionId">
+                        @session.Date.Date
+                    </a>
+                </h4>
+            </div>
+            <div id="@session.SessionId" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="@session.SessionId">
+                <ul class="list-group">
+                    @foreach (var question in session.Questions)
+                    {
+                        <li class="list-group-item">@question</li>
+                    }
+                </ul>
+            </div>
+        </div>
+}
+    }
+    </div>
+}
+else
+{
+    <p>No Sessions have been made yet</p>
+}
