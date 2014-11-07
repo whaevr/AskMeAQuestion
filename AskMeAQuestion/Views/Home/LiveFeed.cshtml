@@ -3,32 +3,66 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<link href="~/css/live-feed.css" rel="stylesheet">
+<style>
+    textarea{
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
+<div id="top-nav" class="navbar navbar-inverse navbar-static-top">
+<div class="container">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-toggle"></span>
+        </button>
+        <span class="navbar-brand" href="#">Welcome Back, @*@Model.UserName!*@</span>
+    </div>
+    <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
 
-
-
-<h2>Live Feed for @Model.CourseName</h2>
-
+            <li class="dropdown">
+                <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#">
+                    <i class="glyphicon glyphicon-user"></i> @*@Model.UserRole*@ <span class="caret"></span>
+                </a>
+                <ul id="g-account-menu" class="dropdown-menu" role="menu">
+                    <li><a href="#">My Profile</a></li>
+                    <li><a href="~/"><i class="glyphicon glyphicon-lock"></i> Logout</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+</div>
 
 <div class="container">
-    <input type="text" id="message" />
-    <input type="button" id="sendmessage" value="Send" />
-    <input type="hidden" id="displayname" />
-    <ul id="discussion"></ul>
+    <h2>Live Feed for @Model.CourseName</h2>
+    <div class="row">
+        <div class="well col-md-4">
+            <form class="form">
+                <h4>Post a new Question</h4>
+                <div class="row">
+                    <textarea cols="40" rows="5" id="message"></textarea>
+                </div>
+                <input type="button" id="sendmessage" class="btn btn-primary" value="Ask" />
+                <input type="hidden" id="displayname" />
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <ul id="discussion" class="list-unstyled"></ul>
+    </div>
 </div>
 
 
 
-
-
-
-
 <style type="text/css">
-    .container {
+    /*.container {
         background-color: #99CCFF;
         border: thick solid #808080;
         padding: 20px;
         margin: 20px;
-    }
+    }*/
 
     .clicked {
         color:red;
@@ -45,8 +79,8 @@
             var encodedName = $('<div />').text(name).html();
             var encodedMsg = $('<div />').text(message).html();
             // Add the message to the page.
-            $('#discussion').append('<li id = ' + id + '> ' + upvotes + '<i class= "glyphicon glyphicon-arrow-up"></i>&nbsp<strong>' + encodedName
-                + '</strong>:&nbsp;&nbsp;' + encodedMsg + '</li>');
+            $('#discussion').append('<li id = ' + id + ' class="well col-md-5"> ' + upvotes + '<i class= "glyphicon glyphicon-arrow-up"></i>&nbsp<strong>' +
+                encodedName +' has asked' + '</strong>:&nbsp;&nbsp;' + encodedMsg + '</li>');
         };
 
 

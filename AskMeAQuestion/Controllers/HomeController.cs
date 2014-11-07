@@ -49,8 +49,8 @@ namespace AskMeAQuestion.Controllers
         {
 
             List<SelectListItem> accountTypeList = new List<SelectListItem>();
-            accountTypeList.Add(new SelectListItem() { Text = "Student", Value = "1"});
-            accountTypeList.Add(new SelectListItem() { Text = "Professor", Value = "2" });
+            accountTypeList.Add(new SelectListItem() { Text = "Student", Value = "Student"});
+            accountTypeList.Add(new SelectListItem() { Text = "Professor", Value = "Professor" });
 
             RegisterViewModel viewModel = new RegisterViewModel();
             viewModel.AccountTypeList = accountTypeList; 
@@ -63,8 +63,8 @@ namespace AskMeAQuestion.Controllers
         {
 
             List<SelectListItem> accountTypeList = new List<SelectListItem>();
-            accountTypeList.Add(new SelectListItem() { Text = "Student", Value = "1" });
-            accountTypeList.Add(new SelectListItem() { Text = "Professor", Value = "2" });
+            accountTypeList.Add(new SelectListItem() { Text = "Student", Value = "Student" });
+            accountTypeList.Add(new SelectListItem() { Text = "Professor", Value = "Professor" });
 
             registrationInfo.AccountTypeList = accountTypeList; 
 
@@ -212,7 +212,7 @@ namespace AskMeAQuestion.Controllers
                                           where p.Status == "pending"
                                           select p;
 
-                    if (user.Role == "2")
+                    if (user.Role == "Professor")
                     {
                         pendingStudents = pendingStudents.Where(x => x.Course.ProfessorId == user.UserId);
                     }
@@ -457,7 +457,7 @@ namespace AskMeAQuestion.Controllers
 
                     var professor = from p in db.Accounts
                                     where p.UserId == vm.ProfessorId
-                                    && p.Role == "2"
+                                    && p.Role == "Professor"
                                     select p;
 
                     if (professor.Count() > 0)
