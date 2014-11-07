@@ -517,12 +517,6 @@ namespace AskMeAQuestion.Controllers
             return View(vm);
         }
 
-        [HttpGet]
-        public PartialViewResult AskQuestion()
-        {
-            return PartialView("~/Views/Shared/_Ask.cshtml");
-        }
-
         public ActionResult AcceptCourse(int id, string userId)
         {
 
