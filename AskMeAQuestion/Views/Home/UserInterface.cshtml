@@ -3,30 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div id="top-nav" class="navbar navbar-inverse navbar-static-top">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="icon-toggle"></span>
-            </button>
-            <span class="navbar-brand" href="#">Welcome Back, @Model.UserName!</span>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav navbar-right">
-
-                <li class="dropdown">
-                    <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#">
-                        <i class="glyphicon glyphicon-user"></i> @Model.UserRole <span class="caret"></span>
-                    </a>
-                    <ul id="g-account-menu" class="dropdown-menu" role="menu">
-                        <li><a href="#">My Profile</a></li>
-                        <li><a href="#"><i class="glyphicon glyphicon-lock"></i> Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div><!-- /container -->
-</div>
+@Html.Partial("~/Views/Shared/_NavBar.cshtml")
 
 <div class="container">
     @using (Html.BeginForm("UserInterface", "Home", FormMethod.Post, new { enctype = "multi-part/form-data" }))
@@ -42,7 +19,7 @@
         </div>
 
     }
-    @if (Model.UserRole == "2" || Model.UserRole == "Admin")
+    @if (Model.UserRole == "Professor" || Model.UserRole == "Admin")
     {
         @Html.ActionLink("Create a new course", "CreateCourse", "Home", new { id = Model.UserId }, null);
     }
@@ -70,7 +47,7 @@
                     <th>
                         Course History
                     </th>
-                    @if (Model.UserRole == "2" || Model.UserRole == "Admin")
+                    @if (Model.UserRole == "Professor" || Model.UserRole == "Admin")
                     {
                         <th>
                             Class List
@@ -94,7 +71,7 @@
                         </td>
                         <td>
 
-                            @if ((Model.UserRole == "Admin" || Model.UserRole == "2") && !course.OpenSession)
+                            @if ((Model.UserRole == "Admin" || Model.UserRole == "Professor") && !course.OpenSession)
                             {
                                 @Html.ActionLink("New Session", "CreateSession", "Home", new { id = course.SectionId, userId = Model.UserId }, null)
 
@@ -113,7 +90,7 @@
                         <td>
                             @Html.ActionLink("Course History", "CourseHistory", "Home", new { id = course.SectionId }, null)
                         </td>
-                        @if (Model.UserRole == "2" || Model.UserRole == "Admin")
+                        @if (Model.UserRole == "Professor" || Model.UserRole == "Admin")
                         {
                             <td>
                                 @Html.ActionLink("Class list", "ClassList", "Home", new { courseId = course.SectionId }, null)
@@ -175,7 +152,7 @@
             </table>
         </div>
     }
-    @if (Model.PendingStudents.Count() > 0 && (Model.UserRole == "Admin" || Model.UserRole == "2"))
+    @if (Model.PendingStudents.Count() > 0 && (Model.UserRole == "Admin" || Model.UserRole == "Professor"))
     {
         <br /><br />
         <div class="panel panel-default">
@@ -223,7 +200,7 @@
         </div>
     }
 
-    @if (Model.MyPendingCourses.Count() > 0 && Model.UserRole == "1")
+    @if (Model.MyPendingCourses.Count() > 0 && Model.UserRole == "Student")
     {
         <br /><br />
         <div class="panel panel-default">

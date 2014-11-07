@@ -8,11 +8,30 @@
     @*<link href="@Url.Content("~/Content/cmich_styles.css")" rel="stylesheet" type="text/css" />*@
     <link rel="stylesheet" href="http://cdn.cmich.edu/bootstrap/3.1.1/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="http://cdn.cmich.edu/css/fonts/fonts.css" />
-
+    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
     <script src="http://cdn.cmich.edu/jquery/jquery.min.js" type="text/javascript"></script>
     <script src="http://cdn.cmich.edu/bootstrap/3.1.1/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/jquery-ui-1.8.24.min.js"></script>
     <script src="@Url.Content("~/Scripts/jquery.signalR-2.1.2.min.js")" type="text/javascript"></script>
     @Scripts.Render("~/bundles/modernizr")
+    <script>
+        $(function () {
+            $("#Ask").dialog({
+                autoOpen: false,
+                show: {
+                    effect: "clip",
+                    duration: 500
+                },
+                hide: {
+                    effect: "scale",
+                    duration: 500
+                }
+            });
+            $("#askQuestion").click(function () {
+                $("#Ask").dialog("open");
+            });
+        });
+    </script>
 </head>
 <body>
     @RenderBody()

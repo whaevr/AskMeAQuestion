@@ -3,35 +3,72 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<link href="~/css/live-feed.css" rel="stylesheet">
+<style>
+    textarea{
+        margin-left: auto;
+        margin-right: auto;
+    }
+    #Ask {
+        display: none;
+    }
+    #message {
+        width: 100%;
+    }
+</style>
+<div id="top-nav" class="navbar navbar-inverse navbar-static-top">
+<div class="container">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-toggle"></span>
+        </button>
+        <button id="askQuestion" class="navbar-brand">Ask!</button>
+    </div>
+    <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
 
-
-
-<h2>Live Feed for @Model.CourseName</h2>
-
+            <li class="dropdown">
+                <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#">
+                    <i class="glyphicon glyphicon-user"></i> @*@Model.UserRole*@ <span class="caret"></span>
+                </a>
+                <ul id="g-account-menu" class="dropdown-menu" role="menu">
+                    <li><a href="#">My Profile</a></li>
+                    <li><a href="~/"><i class="glyphicon glyphicon-lock"></i> Logout</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+</div>
 
 <div class="container">
-    <input type="text" id="message" />
-    <input type="button" id="sendmessage" value="Send" />
-    <input type="hidden" id="displayname" />
-    <ul id="discussion"></ul>
+    <h2>Live Feed for @Model.CourseName</h2>
+
+    <div id="Ask" title="Ask Question!" class="well" >
+        <form class="form-horizontal">
+                <h4>Post a new Question</h4>
+                <div class="row">
+                    <textarea cols="20" rows="5" id="message"></textarea>
+                </div>
+            <div class="col-md-offset-10"><input type="button" id="sendmessage" class="btn btn-primary" value="Ask" /></div>
+                <input type="hidden" id="displayname" />
+        </form>
+    </div>
+
+    <div class="row col-md-6">
+        <ul id="discussion" class="list-unstyled"></ul>
+    </div>
 </div>
 
 
 
-
-
-
-
 <style type="text/css">
-    .container {
-        background-color: #99CCFF;
-        border: thick solid #808080;
-        padding: 20px;
-        margin: 20px;
-    }
-
     .clicked {
         color:red;
+    }
+    .italic {
+        font-style: italic;
+        font-weight: 100;
     }
 </style>
 <script src="~/signalr/hubs" type="text/javascript"></script>
@@ -45,16 +82,16 @@
             var encodedName = $('<div />').text(name).html();
             var encodedMsg = $('<div />').text(message).html();
             // Add the message to the page.
-            $('#discussion').append('<li id = ' + id + '> ' + upvotes + '<i class= "glyphicon glyphicon-arrow-up"></i>&nbsp<strong>' + encodedName
-                + '</strong>:&nbsp;&nbsp;' + encodedMsg + '</li>');
+            $('#discussion').append('<li id = ' + id + ' class="panel panel-default row"><div class="panel-heading">' + upvotes + '<i class= "glyphicon glyphicon-arrow-up"></i>&nbsp<strong>' +
+                encodedName + '</strong> <span class="italic">has asked</span></div><div class="panel-body">' + encodedMsg + '</div></li>');
         };
 
-
+         
         chat.client.upvoteQuestion = function (name, message, id, upvotes) {
             var encodedName = $('<div />').text(name).html();
             var encodedMsg = $('<div />').text(message).html();
-            var newText = upvotes + '<i class= "glyphicon glyphicon-arrow-up"></i>&nbsp<strong>' + encodedName
-                + '</strong>:&nbsp;&nbsp;' + encodedMsg
+            var newText = '<div class="panel-heading">' + upvotes + '<i class= "glyphicon glyphicon-arrow-up"></i>&nbsp<strong>' +
+                encodedName + '</strong> <span class="italic">has asked</span></div><div class="panel-body">' + encodedMsg + '</div>';
             $('#' + id).html(newText);
         };
         // Get the user name and store it to prepend to messages.
@@ -71,11 +108,10 @@
             });
 
             $(document).on('click', '.glyphicon-arrow-up', function () {
-                var questionId = $(this).parent().attr("id");
+                var questionId = $(this).parent().parent().attr("id");
                 chat.server.upvote(questionId);
             });
 
         });
-
     });
 </script>
