@@ -2,7 +2,7 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+@{Html.RenderAction("GetNavigationForUser", "Home", new { userId = Model.UserId });}
 <link href="~/css/live-feed.css" rel="stylesheet">
 <style>
     textarea{
@@ -55,6 +55,20 @@
         </form>
     </div>
 
+    @if (Model.CurrentSession.Questions.Count() > 0)
+    {
+            <div id="sessionHistory" class="btn btn-default">View today's session history</div><br />
+        
+        <ul id="pastQuestions" class="list-group" style="display:none">
+                @foreach (var question in Model.CurrentSession.Questions)
+                {
+                   
+                    <li class="list-group-item">@question</li>
+                }
+            </ul>
+            
+    }
+
     <div class="row col-md-6">
         <ul id="discussion" class="list-unstyled"></ul>
     </div>
@@ -94,8 +108,19 @@
                 encodedName + '</strong> <span class="italic">has asked</span></div><div class="panel-body">' + encodedMsg + '</div>';
             $('#' + id).html(newText);
         };
+
+        $("#sessionHistory").click(function () {
+            $("#pastQuestions").show();
+        });
         // Get the user name and store it to prepend to messages.
-        $('#displayname').val('@Model.UserId');
+
+        if ('@Model.AnonOn' == "True") {
+
+            $('#displayname').val("Anon");
+        }
+        else {
+            $('#displayname').val('@Model.UserId');
+        }
         // Set initial focus to message input box.
         $('#message').focus();
         // Start the connection.

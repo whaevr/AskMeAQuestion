@@ -13,6 +13,7 @@ namespace AskMeAQuestion.ViewModels
         public string ProfessorId { get; set; }
         public string Status { get; set; }
         public bool OpenSession { get; set; }
+        public bool AnonOn { get; set; }
 
         public List<SessionViewModel> Sessions { get; set; }
     }

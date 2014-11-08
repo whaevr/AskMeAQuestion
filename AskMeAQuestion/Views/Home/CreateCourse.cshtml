@@ -2,7 +2,7 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+@{Html.RenderAction("GetNavigationForUser", "Home", new { userId = Model.ProfessorId });}
 <h2>Create a Course</h2>
 
 <br />

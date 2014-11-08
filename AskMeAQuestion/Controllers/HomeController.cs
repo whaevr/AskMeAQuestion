@@ -144,6 +144,12 @@ namespace AskMeAQuestion.Controllers
                             {
                                 addCourse.OpenSession = true;
 
+                                if (currentSession.First().AnonOn != null)
+                                {
+                                    addCourse.AnonOn = (bool)currentSession.First().AnonOn;
+                                }
+                                else { addCourse.AnonOn = false; }
+
                             }
                             else
                             {
@@ -323,6 +329,8 @@ namespace AskMeAQuestion.Controllers
                             if (currentSession != null)
                             {
                                 addCourse.OpenSession = true;
+                                addCourse.AnonOn = (bool)currentSession.First().AnonOn;
+
 
                             }
                             else
@@ -509,9 +517,21 @@ namespace AskMeAQuestion.Controllers
                             where u.UserId == userId
                             select u).First();
 
+
+                var session = (from c in db.Sessions
+                                     where c.CourseId == id &&
+                                     c.Date == DateTime.Today
+                                     select c).First();
+
+                SessionViewModel currentSession = new SessionViewModel();
+                currentSession.Date = DateTime.Now;
+                currentSession.Questions = session.Questions.Select(x => x.Question1).ToList();
+                currentSession.SessionId = session.SessionId;
+                vm.CurrentSession = currentSession;
                 vm.CourseName = course.CourseName;
                 vm.CourseDesignator = course.CourseDesignator;
                 vm.UserId = user.UserId;
+                vm.AnonOn = (bool)session.AnonOn;
                 
             }
             return View(vm);
@@ -641,11 +661,38 @@ namespace AskMeAQuestion.Controllers
                 newSession.SessionId = lastSessionId.SessionId + 1;
                 newSession.CourseId = id;
                 newSession.Date = DateTime.Today;
+                newSession.AnonOn = false;
 
                 db.Sessions.Add(newSession);
                 db.SaveChanges();
             }
             return RedirectToAction("LiveFeed", "Home", new { id = id, userId = userId });
+        }
+
+        public ActionResult AnonOn(int id, string userId, string setting)
+        {
+            using (var db = new AskMeAQuestionEntities())
+            {
+
+                var currentSession = from c in db.Sessions
+                                     where c.CourseId == id &&
+                                     c.Date == DateTime.Today
+                                     select c;
+
+                if (currentSession != null)
+                {
+                    if(setting == "On") {
+                        currentSession.First().AnonOn = true;
+                    }
+                    else
+                    {
+                        currentSession.First().AnonOn = false;
+                    }
+                }
+
+                db.SaveChanges();
+            }
+            return RedirectToAction("UserInterface", "Home", new { userId = userId });
         }
 
         public ActionResult CourseHistory(int id)
@@ -672,12 +719,17 @@ namespace AskMeAQuestion.Controllers
                     newS.SessionId = session.SessionId;
 
                     List<string> questions = new List<string>();
+                    List<int> upvotes = new List<int>();
                     foreach (var question in session.Questions)
                     {
                         questions.Add(question.Question1);
+
+                        upvotes.Add((int)question.Upvotes);
+                        
                     }
 
                     newS.Questions = questions;
+                    newS.Upvotes = upvotes;
 
                     sessions.Add(newS);
                 }
@@ -685,6 +737,22 @@ namespace AskMeAQuestion.Controllers
                 vm.Sessions = sessions;
             }
             return View(vm);
+        }
+
+        public PartialViewResult GetNavigationForUser(string userId)
+        {
+               UserInterfaceViewModel vm = new UserInterfaceViewModel();
+
+            using (var db = new AskMeAQuestionEntities()) {
+                var user = (from u in db.Accounts
+                            where u.UserId == userId
+                            select u).First();
+
+                vm.UserId = userId;
+                vm.UserName = user.FirstName;
+                vm.UserRole = user.Role;
+            }
+            return PartialView("_NavBar", vm);
         }
 
     }

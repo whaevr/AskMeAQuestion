@@ -10,5 +10,6 @@ namespace AskMeAQuestion.ViewModels
         public int SessionId { get; set; }
         public DateTime Date { get; set; }
         public List<string> Questions { get; set; }
+        public List<int> Upvotes { get; set; }
     }
 }

@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@Html.Partial("~/Views/Shared/_NavBar.cshtml")
+@{Html.RenderAction("GetNavigationForUser", "Home", new { userId = Model.UserId });}
 
 <div class="container">
     @using (Html.BeginForm("UserInterface", "Home", FormMethod.Post, new { enctype = "multi-part/form-data" }))
@@ -96,7 +96,17 @@
                                 @Html.ActionLink("Class list", "ClassList", "Home", new { courseId = course.SectionId }, null)
 
                             </td>
-                            <td></td>
+                            <td>
+                            @if (course.OpenSession && course.AnonOn)
+                            {
+                               @Html.ActionLink("Anon: On (Turn off)", "AnonOn", "Home", new { id = course.SectionId, userId = Model.UserId, setting = "Off" }, null);
+                            }
+                            else if(course.OpenSession)
+                            {
+                               @Html.ActionLink("Anon: Off (Turn on)", "AnonOn", "Home", new { id = course.SectionId, userId = Model.UserId, setting = "On" }, null);
+
+                            }
+                            </td>
                         }
                     </tr>
 

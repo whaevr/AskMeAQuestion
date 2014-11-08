@@ -11,5 +11,7 @@ namespace AskMeAQuestion.ViewModels
         public String UserId { get; set; }
         public String CourseName { get; set; }
         public String CourseDesignator { get; set; }
+        public SessionViewModel CurrentSession { get; set; }
+        public bool AnonOn { get; set; }
     }
 }
