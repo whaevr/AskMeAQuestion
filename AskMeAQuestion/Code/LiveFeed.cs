@@ -25,13 +25,13 @@ namespace AskMeAQuestion.Code
                     var session = (from s in db.Sessions
                                   where s.Course.CourseDesignator == designator &&
                                   s.Date == DateTime.Today
-                                  select s.SessionId).First();
+                                  select s).First();
 
                     var lastQ = (from q in db.Questions
                                  select q).OrderByDescending(x => x.QuestionId).First();
 
                     Question question = new Question();
-                    question.SessionId = session;
+                    question.SessionId = session.SessionId;
                     question.Question1 = message;
                     question.Submitter = name;
                     question.Time = DateTime.Now;
@@ -41,7 +41,17 @@ namespace AskMeAQuestion.Code
                     db.Questions.Add(question);
                     db.SaveChanges();
 
-                    Clients.All.broadcastMessage(name, message, question.QuestionId, 0);
+                    string nameToSend; 
+                    if (session.AnonOn == true)
+                    {
+                        nameToSend = "Anon";
+                    }
+                    else
+                    {
+                        nameToSend = name;
+                    }
+
+                    Clients.All.broadcastMessage(nameToSend, message, question.QuestionId, 0);
 
                 }
 
@@ -58,6 +68,15 @@ namespace AskMeAQuestion.Code
                                 select q).First();
 
                 upvoted.Upvotes += 1;
+
+                string name;
+                if (upvoted.Session.AnonOn == true)
+                {
+                    name = "Anon";
+                }
+                else{
+                    name = upvoted.Account.UserId;
+                }
                 db.SaveChanges();
 
                 Clients.All.upvoteQuestion(upvoted.Account.UserId, upvoted.Question1, questionId, upvoted.Upvotes);

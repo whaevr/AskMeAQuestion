@@ -14,6 +14,7 @@ namespace AskMeAQuestion.ViewModels
         public string Status { get; set; }
         public bool OpenSession { get; set; }
         public bool AnonOn { get; set; }
+        public string UserId { get; set; }
 
         public List<SessionViewModel> Sessions { get; set; }
     }

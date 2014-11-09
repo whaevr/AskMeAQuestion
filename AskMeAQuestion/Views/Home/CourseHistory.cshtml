@@ -2,7 +2,7 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+@{Html.RenderAction("GetNavigationForUser", "Home", new { userId = Model.UserId });}
 <h2>@Model.CourseName Course History</h2>
 
 @if (Model.Sessions.Count() > 0)
@@ -13,19 +13,19 @@
         if (session.Questions.Count() > 0)
         {
         <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="@session.SessionId">
+            <div class="panel-heading" role="tab" id="headingOne">
                 <h4 class="panel-title">
                     <a data-toggle="collapse" data-parent="#accordion" href="@session.SessionId" aria-expanded="true" aria-controls="@session.SessionId">
-                        @session.Date.Date
+                        @session.Date.ToShortDateString()
                     </a>
                 </h4>
             </div>
-            <div id="@session.SessionId" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="@session.SessionId">
+            <div id="@session.SessionId" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                 <ul class="list-group">
 
                     @foreach (var question in session.Questions)
                     {
-                        <li class="list-group-item">@question</li>
+                    <li class="list-group-item">@question.Upvotes <i class="glyphicon glyphicon-arrow-up"></i> <strong>@question.Submitter</strong><em> asked </em> @question.Question</li>
                     }
                 </ul>
             </div>

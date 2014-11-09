@@ -525,8 +525,32 @@ namespace AskMeAQuestion.Controllers
 
                 SessionViewModel currentSession = new SessionViewModel();
                 currentSession.Date = DateTime.Now;
-                currentSession.Questions = session.Questions.Select(x => x.Question1).ToList();
                 currentSession.SessionId = session.SessionId;
+
+                List<QuestionViewModel> questions = new List<QuestionViewModel>();
+                foreach (var sQuestion in session.Questions)
+                {
+                    string submitter;
+                    if (session.AnonOn == true)
+                    {
+                        submitter = "Anon";
+                    }
+                    else
+                    {
+                        submitter = sQuestion.Submitter;
+                    }
+                    
+                        questions.Add(new QuestionViewModel()
+                    {
+                        QuestionId =  sQuestion.QuestionId,
+                        Question = sQuestion.Question1,
+                        Upvotes = (int)sQuestion.Upvotes,
+                        Submitter = submitter
+
+                    });
+                }
+                currentSession.Questions = questions;
+
                 vm.CurrentSession = currentSession;
                 vm.CourseName = course.CourseName;
                 vm.CourseDesignator = course.CourseDesignator;
@@ -600,7 +624,7 @@ namespace AskMeAQuestion.Controllers
             return RedirectToAction("UserInterface", "Home", new { userId = userId });
         }
 
-        public ActionResult ClassList(int courseId)
+        public ActionResult ClassList(int courseId, string userId)
         {
             List<ClassListViewModel> vm = new List<ClassListViewModel>();
             using (var db = new AskMeAQuestionEntities())
@@ -618,6 +642,7 @@ namespace AskMeAQuestion.Controllers
                     addStudent.Name = student.Account.FirstName;
                     addStudent.StudentId = student.StudentId;
                     addStudent.Status = student.Status;
+                    addStudent.UserId = userId;
 
                     vm.Add(addStudent);
                 }
@@ -695,7 +720,7 @@ namespace AskMeAQuestion.Controllers
             return RedirectToAction("UserInterface", "Home", new { userId = userId });
         }
 
-        public ActionResult CourseHistory(int id)
+        public ActionResult CourseHistory(int id, string userId)
         {
 
             CourseViewModel vm = new CourseViewModel();
@@ -709,6 +734,7 @@ namespace AskMeAQuestion.Controllers
                 vm.CourseDesignator = course.CourseDesignator;
                 vm.CourseName = course.CourseName;
                 vm.ProfessorId = course.ProfessorId;
+                vm.UserId = userId;
 
                 List<SessionViewModel> sessions = new List<SessionViewModel>();
                 foreach (var session in course.Sessions)
@@ -718,18 +744,20 @@ namespace AskMeAQuestion.Controllers
                     newS.Date = session.Date;
                     newS.SessionId = session.SessionId;
 
-                    List<string> questions = new List<string>();
-                    List<int> upvotes = new List<int>();
+                    List<QuestionViewModel> questions = new List<QuestionViewModel>();
                     foreach (var question in session.Questions)
                     {
-                        questions.Add(question.Question1);
-
-                        upvotes.Add((int)question.Upvotes);
+                        questions.Add(new QuestionViewModel()
+                        {
+                               QuestionId = question.QuestionId,
+                               Question = question.Question1,
+                               Upvotes = (int)question.Upvotes,
+                               Submitter = question.Submitter
+                        });
                         
                     }
 
                     newS.Questions = questions;
-                    newS.Upvotes = upvotes;
 
                     sessions.Add(newS);
                 }

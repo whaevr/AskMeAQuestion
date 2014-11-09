@@ -13,5 +13,6 @@ namespace AskMeAQuestion.ViewModels
         public string Name { get; set; }
         public string CourseDesignator { get; set; }
         public string CourseName { get; set; }
+        public string UserId { get; set; }
     }
 }

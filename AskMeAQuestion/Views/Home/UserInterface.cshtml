@@ -88,12 +88,12 @@
 
                         </td>
                         <td>
-                            @Html.ActionLink("Course History", "CourseHistory", "Home", new { id = course.SectionId }, null)
+                            @Html.ActionLink("Course History", "CourseHistory", "Home", new { id = course.SectionId, userId = Model.UserId }, null)
                         </td>
                         @if (Model.UserRole == "Professor" || Model.UserRole == "Admin")
                         {
                             <td>
-                                @Html.ActionLink("Class list", "ClassList", "Home", new { courseId = course.SectionId }, null)
+                                @Html.ActionLink("Class list", "ClassList", "Home", new { courseId = course.SectionId, userId = Model.UserId }, null)
 
                             </td>
                             <td>

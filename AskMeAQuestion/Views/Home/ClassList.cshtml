@@ -2,7 +2,7 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+@{Html.RenderAction("GetNavigationForUser", "Home", new { userId = Model.First().UserId });}
 <h2>@Model.First().CourseDesignator Class List</h2>
 
 @if (Model.Count() > 0)
