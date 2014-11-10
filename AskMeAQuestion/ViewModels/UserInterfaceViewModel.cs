@@ -14,6 +14,8 @@ namespace AskMeAQuestion.ViewModels
         public String UserName { get; set; }
         public String UserRole { get; set; }
         public String UserId { get; set; }
+        public String DisplayMessage { get; set; }
+        public int QuestionCount { get; set; }
 
 
         public List<CourseViewModel> UserCourseList { get; set; }

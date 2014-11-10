@@ -1,25 +1,22 @@
-﻿
-<div id="top-nav" class="navbar navbar-inverse navbar-static-top">
+﻿<div id="top-nav" class="navbar navbar-inverse navbar-static-top">
     <div class="container">
-        <div class="navbar-header">
+        <div class="row">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                 <span class="icon-toggle"></span>
             </button>
-            <span class="navbar-brand" href="#">Welcome Back, @Model.UserName!</span>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav navbar-right">
+            <span class="navbar-brand" href="#">@Model.DisplayMessage</span>
+                <ul class="nav navbar-nav navbar-right">
 
-                <li class="dropdown">
-                    <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#">
-                        <i class="glyphicon glyphicon-user"></i> @Model.UserRole <span class="caret"></span>
-                    </a>
-                    <ul id="g-account-menu" class="dropdown-menu" role="menu">
-                        <li>@Html.ActionLink("My profile", "UserInterface", "Home", new { userId = Model.UserId }, null)</li>
-                        <li><a href=""><i class="glyphicon glyphicon-lock"></i> Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#">
+                            <i class="glyphicon glyphicon-user"></i> @Model.UserRole <span class="caret"></span>
+                        </a>
+                        <ul id="g-account-menu" class="dropdown-menu" role="menu">
+                            <li>@Html.ActionLink("My profile", "UserInterface", "Home", new { userId = Model.UserId }, null)</li>
+                            <li><a href="~/"><i class="glyphicon glyphicon-lock"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
         </div>
     </div>
 </div>

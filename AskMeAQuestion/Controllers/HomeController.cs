@@ -545,7 +545,8 @@ namespace AskMeAQuestion.Controllers
                         QuestionId =  sQuestion.QuestionId,
                         Question = sQuestion.Question1,
                         Upvotes = (int)sQuestion.Upvotes,
-                        Submitter = submitter
+                        Submitter = submitter,
+                        SubmissionDateTime = String.Format("{0} at {1}", sQuestion.Time.ToShortDateString(), sQuestion.Time.ToShortTimeString())
 
                     });
                 }
@@ -767,11 +768,12 @@ namespace AskMeAQuestion.Controllers
             return View(vm);
         }
 
-        public PartialViewResult GetNavigationForUser(string userId)
+        public PartialViewResult GetNavigationForUser(string userId, string message, int questionCount = 0)
         {
-               UserInterfaceViewModel vm = new UserInterfaceViewModel();
+            UserInterfaceViewModel vm = new UserInterfaceViewModel();
 
-            using (var db = new AskMeAQuestionEntities()) {
+            using (var db = new AskMeAQuestionEntities())
+            {
                 var user = (from u in db.Accounts
                             where u.UserId == userId
                             select u).First();
@@ -779,6 +781,8 @@ namespace AskMeAQuestion.Controllers
                 vm.UserId = userId;
                 vm.UserName = user.FirstName;
                 vm.UserRole = user.Role;
+                vm.DisplayMessage = message;
+                vm.QuestionCount = questionCount;
             }
             return PartialView("_NavBar", vm);
         }

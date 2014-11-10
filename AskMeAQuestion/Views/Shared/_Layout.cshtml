@@ -7,18 +7,20 @@
     @Styles.Render("~/Content/css")
     @*<link href="@Url.Content("~/Content/cmich_styles.css")" rel="stylesheet" type="text/css" />*@
 
-    <link href="~/Content/themes/base/jquery-ui.css" rel="stylesheet" />
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
     <script src="http://cdn.cmich.edu/jquery/jquery.min.js" type="text/javascript"></script>
-    <script src="~/Scripts/jquery-ui-1.8.24.min.js"></script>
+    <script src="~/Scripts/jquery-ui.min-1.11.1.js"></script>
     <link rel="stylesheet" href="http://cdn.cmich.edu/bootstrap/3.1.1/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="http://cdn.cmich.edu/css/fonts/fonts.css" />
     <script src="http://cdn.cmich.edu/bootstrap/3.1.1/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/knockout-3.2.0.js"></script>
     <script src="@Url.Content("~/Scripts/jquery.signalR-2.1.2.min.js")" type="text/javascript"></script>
     @Scripts.Render("~/bundles/modernizr")
     <script>
         $(function () {
             $("#Ask").dialog({
                 autoOpen: false,
+                draggable: true,
                 show: {
                     effect: "clip",
                     duration: 500

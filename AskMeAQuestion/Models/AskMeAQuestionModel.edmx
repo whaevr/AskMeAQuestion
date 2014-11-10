@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="simmo2jjModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="simmo2jjModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Accounts">
           <Key>
             <PropertyRef Name="UserId" />
@@ -55,6 +55,14 @@
           <Property Name="CourseId" Type="int" Nullable="false" />
           <Property Name="AnonOn" Type="bit" />
           <Property Name="Date" Type="date" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Upvote">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="QuestionId" />
+          </Key>
+          <Property Name="UserId" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="QuestionId" Type="int" Nullable="false" />
         </EntityType>
         <Association Name="FK_ClassList_Accounts">
           <End Role="Accounts" Type="Self.Accounts" Multiplicity="1" />
@@ -134,6 +142,7 @@
           <EntitySet Name="Course" EntityType="Self.Course" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Question" EntityType="Self.Question" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Session" EntityType="Self.Session" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Upvote" EntityType="Self.Upvote" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_ClassList_Accounts" Association="Self.FK_ClassList_Accounts">
             <End Role="Accounts" EntitySet="Accounts" />
             <End Role="ClassList" EntitySet="ClassList" />
@@ -193,6 +202,7 @@
             <End Role="Session" EntitySet="Sessions" />
             <End Role="Question" EntitySet="Questions" />
           </AssociationSet>
+          <EntitySet Name="Upvotes" EntityType="simmo2jjModel.Upvote" />
         </EntityContainer>
         <EntityType Name="Account">
           <Key>
@@ -329,6 +339,14 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Upvote">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="QuestionId" />
+          </Key>
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="QuestionId" Type="Int32" Nullable="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -387,6 +405,14 @@
                 <ScalarProperty Name="AnonOn" ColumnName="AnonOn" />
                 <ScalarProperty Name="CourseId" ColumnName="CourseId" />
                 <ScalarProperty Name="SessionId" ColumnName="SessionId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Upvotes">
+            <EntityTypeMapping TypeName="simmo2jjModel.Upvote">
+              <MappingFragment StoreEntitySet="Upvote">
+                <ScalarProperty Name="QuestionId" ColumnName="QuestionId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

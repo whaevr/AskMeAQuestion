@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@{Html.RenderAction("GetNavigationForUser", "Home", new { userId = Model.UserId });}
+@{Html.RenderAction("GetNavigationForUser", "Home", new { userId = Model.UserId, message = "Welcome back! " + Model.UserName });}
 
 <div class="container">
     @using (Html.BeginForm("UserInterface", "Home", FormMethod.Post, new { enctype = "multi-part/form-data" }))

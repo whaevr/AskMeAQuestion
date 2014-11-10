@@ -1,10 +1,14 @@
 ﻿@model AskMeAQuestion.ViewModels.LiveFeedViewModel
 @{
+    ViewBag.Title = "Live Feed";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@{Html.RenderAction("GetNavigationForUser", "Home", new { userId = Model.UserId });}
+@{Html.RenderAction("GetNavigationForUser", "Home", new { userId = Model.UserId, message = "Live Feed for " + @Model.CourseName, questionCount = Model.CurrentSession.Questions.Count() });}
 <link href="~/css/live-feed.css" rel="stylesheet">
 <style>
+    body, html {
+        height: 100%;
+    }
     textarea{
         margin-left: auto;
         margin-right: auto;
@@ -15,34 +19,40 @@
     #message {
         width: 100%;
     }
+    #pastQuestions {
+        display: none;
+        overflow-y: scroll;
+        position: relative;
+        height: 65em;
+    }
+    .control-label {
+        font-weight: 100;
+    }
+    .panel-heading {
+        -moz-user-select: -moz-none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+    .clicked {
+        color: red;
+    }
+
+    .italic {
+        font-style: italic;
+        font-weight: 100;
+    }
+    .ui-widget-header {
+        background: #222;
+        border: 1px solid #080808;
+    }
+    .btn-primary {
+        background-color: #999;
+    }
 </style>
-<div id="top-nav" class="navbar navbar-inverse navbar-static-top">
-<div class="container">
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="icon-toggle"></span>
-        </button>
-        <button id="askQuestion" class="navbar-brand">Ask!</button>
-    </div>
-    <div class="navbar-collapse collapse">
-        <ul class="nav navbar-nav navbar-right">
-
-            <li class="dropdown">
-                <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#">
-                    <i class="glyphicon glyphicon-user"></i> @*@Model.UserRole*@ <span class="caret"></span>
-                </a>
-                <ul id="g-account-menu" class="dropdown-menu" role="menu">
-                    <li><a href="#">My Profile</a></li>
-                    <li><a href="~/"><i class="glyphicon glyphicon-lock"></i> Logout</a></li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-</div>
-</div>
 
 <div class="container">
-    <h2>Live Feed for @Model.CourseName</h2>
 
     <div id="Ask" title="Ask Question!" class="well" >
         <form class="form-horizontal">
@@ -50,42 +60,47 @@
                 <div class="row">
                     <textarea cols="20" rows="5" id="message"></textarea>
                 </div>
-            <div class="col-md-offset-10"><input type="button" id="sendmessage" class="btn btn-primary" value="Ask" /></div>
-                <input type="hidden" id="displayname" />
+            <label class="control-label">Close window on submit</label> <input id="chkClose" type="checkbox" checked="checked" />
+            <input type="button" id="sendmessage" class="btn btn-primary" style="margin-left: 1em" value="Ask" />
+            <input type="hidden" id="displayname" />
         </form>
     </div>
 
-    @if (Model.CurrentSession.Questions.Count() > 0)
-    {
-            <div id="sessionHistory" class="btn btn-default">View today's session history</div><br />
-        
-        <ul id="pastQuestions" class="list-group" style="display:none">
-                @foreach (var question in Model.CurrentSession.Questions)
-                {
-                    <li class="list-group-item">@question.Upvotes <i class="glyphicon glyphicon-arrow-up"></i> <strong>@question.Submitter</strong><em> asked </em> @question.Question</li>
-                }
-            </ul>
-    }
-
-    <div class="row col-md-6">
-        <ul id="discussion" class="list-unstyled"></ul>
+    <div class="form-group row">
+        <button id="askQuestion" class="btn btn-primary">Ask!</button>
+        @if (Model.CurrentSession.Questions.Count() > 0)
+        { <button id="sessionHistory" class="btn btn-primary">View today's session history</button>}
     </div>
+
+    <div class="form-group row">
+        <ul id="discussion" class="list-unstyled col-md-6"></ul>
+    </div>
+
+    @if (Model.CurrentSession.Questions.Count() > 0)
+{
+    
+    <div class="form-group row">
+        <ul id="pastQuestions" class="list-unstyled col-md-6">
+            <li><h3>Past Questions</h3></li>
+            @foreach (var question in Model.CurrentSession.Questions.OrderByDescending(x => x.QuestionId))
+            {
+                <li class="panel panel-default row">
+                    <div class="unselectable panel-heading">@question.Upvotes
+                        <i class="glyphicon glyphicon-arrow-up"></i> 
+                        <strong>@question.Submitter</strong><span class="italic"> asked on @question.SubmissionDateTime</span>
+                    </div>
+                    <div class="panel-body">@question.Question</div>
+                </li>
+            }
+        </ul>
+    </div>
+}
+
 </div>
 
-
-
-<style type="text/css">
-    .clicked {
-        color:red;
-    }
-    .italic {
-        font-style: italic;
-        font-weight: 100;
-    }
-</style>
 <script src="~/signalr/hubs" type="text/javascript"></script>
-<script type="text/javascript">
-    $(function () {
+<script type="text/javascript">    
+    $(document).ready(function () {
         // Declare a proxy to reference the hub.
         var chat = $.connection.liveFeed;
         // Create a function that the hub can call to broadcast messages.
@@ -94,7 +109,7 @@
             var encodedName = $('<div />').text(name).html();
             var encodedMsg = $('<div />').text(message).html();
             // Add the message to the page.
-            $('#discussion').append('<li id = ' + id + ' class="panel panel-default row"><div class="panel-heading">' + upvotes + '<i class= "glyphicon glyphicon-arrow-up"></i>&nbsp<strong>' +
+            $('#discussion').prepend('<li id = ' + id + ' class="panel panel-default row"><div class="unselectable panel-heading">' + upvotes + '<i class="glyphicon glyphicon-arrow-up"></i>&nbsp<strong>' +
                 encodedName + '</strong> <span class="italic">has asked</span></div><div class="panel-body">' + encodedMsg + '</div></li>');
         };
 
@@ -102,7 +117,7 @@
         chat.client.upvoteQuestion = function (name, message, id, upvotes) {
             var encodedName = $('<div />').text(name).html();
             var encodedMsg = $('<div />').text(message).html();
-            var newText = '<div class="panel-heading">' + upvotes + '<i class= "glyphicon glyphicon-arrow-up"></i>&nbsp<strong>' +
+            var newText = '<div class="unselectable panel-heading">' + upvotes + '<i class= "glyphicon glyphicon-arrow-up"></i>&nbsp<strong>' +
                 encodedName + '</strong> <span class="italic">has asked</span></div><div class="panel-body">' + encodedMsg + '</div>';
             $('#' + id).html(newText);
         };
@@ -127,12 +142,18 @@
                 // Call the Send method on the hub.
                 chat.server.send('@Model.UserId', $('#message').val(), '@Model.CourseDesignator');
                 // Clear text box and reset focus for next comment.
-                $('#message').val('').focus();
+                if ($('#chkClose').is(':checked')) {
+                    $("#Ask").dialog("close");
+                    $('#message').val('');
+                } else {
+                    $('#message').val('').focus();
+                }               
             });
 
             $(document).on('click', '.glyphicon-arrow-up', function () {
                 var questionId = $(this).parent().parent().attr("id");
-                chat.server.upvote(questionId);
+                chat.server.upvote(questionId, '@Model.UserId');
+
             });
 
         });

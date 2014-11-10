@@ -59,28 +59,40 @@ namespace AskMeAQuestion.Code
             }
         }
 
-        public void Upvote(int questionId)
+        public void Upvote(int questionId, string userId)
         {
             using (var db = new AskMeAQuestionEntities())
             {
-                var upvoted = (from q in db.Questions
-                               where q.QuestionId == questionId 
-                                select q).First();
 
-                upvoted.Upvotes += 1;
-
-                string name;
-                if (upvoted.Session.AnonOn == true)
+                if (!db.Upvotes.Where(x => x.QuestionId == questionId).Any(x => x.UserId.Equals(userId)))
                 {
-                    name = "Anon";
-                }
-                else{
-                    name = upvoted.Account.UserId;
-                }
-                db.SaveChanges();
+                    var upvoted = (from q in db.Questions
+                                   where q.QuestionId == questionId
+                                   select q).First();
 
-                Clients.All.upvoteQuestion(upvoted.Account.UserId, upvoted.Question1, questionId, upvoted.Upvotes);
+                    upvoted.Upvotes += 1;
 
+                    string name;
+                    if (upvoted.Session.AnonOn == true)
+                    {
+                        name = "Anon";
+                    }
+                    else
+                    {
+                        name = upvoted.Account.UserId;
+                    }
+
+                    Upvote upvote = new Upvote()
+                    {
+                        UserId = userId,
+                        QuestionId = questionId
+                    };
+
+                    db.Upvotes.Add(upvote);
+                    db.SaveChanges();
+
+                    Clients.All.upvoteQuestion(name, upvoted.Question1, questionId, upvoted.Upvotes);
+                }
             }
         }
 
