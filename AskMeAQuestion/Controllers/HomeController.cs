@@ -544,9 +544,10 @@ namespace AskMeAQuestion.Controllers
                     {
                         QuestionId =  sQuestion.QuestionId,
                         Question = sQuestion.Question1,
+                        Replies = sQuestion.Responses.ToList(),
                         Upvotes = (int)sQuestion.Upvotes,
                         Submitter = submitter,
-                        SubmissionDateTime = String.Format("{0} at {1}", sQuestion.Time.ToShortDateString(), sQuestion.Time.ToShortTimeString())
+                        SubmissionDateTime = sQuestion.Time
 
                     });
                 }
@@ -752,6 +753,8 @@ namespace AskMeAQuestion.Controllers
                         {
                                QuestionId = question.QuestionId,
                                Question = question.Question1,
+                               SubmissionDateTime = question.Time,
+                               Replies = question.Responses.ToList(),
                                Upvotes = (int)question.Upvotes,
                                Submitter = question.Submitter
                         });

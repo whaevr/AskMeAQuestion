@@ -27,15 +27,11 @@ namespace AskMeAQuestion.Code
                                   s.Date == DateTime.Today
                                   select s).First();
 
-                    var lastQ = (from q in db.Questions
-                                 select q).OrderByDescending(x => x.QuestionId).First();
-
                     Question question = new Question();
                     question.SessionId = session.SessionId;
                     question.Question1 = message;
                     question.Submitter = name;
                     question.Time = DateTime.Now;
-                    question.QuestionId = lastQ.QuestionId + 1;
                     question.Upvotes = 0;
 
                     db.Questions.Add(question);
@@ -51,7 +47,56 @@ namespace AskMeAQuestion.Code
                         nameToSend = name;
                     }
 
-                    Clients.All.broadcastMessage(nameToSend, message, question.QuestionId, 0);
+                    string time = question.Time.ToShortTimeString();
+
+                    Clients.All.broadcastMessage(nameToSend, message, time, question.QuestionId, 0);
+
+                }
+
+
+            }
+        }
+
+        public void SendReply(string name, string message, string designator, int questionId)
+        {
+            // Call the broadcastMessage method to update clients.
+
+            if (message != "")
+            {
+
+
+                using (var db = new AskMeAQuestionEntities())
+                {
+
+                    var session = (from s in db.Sessions
+                                   where s.Course.CourseDesignator == designator &&
+                                   s.Date == DateTime.Today
+                                   select s).First();
+
+                    Response r = new Response()
+                    {
+                        QuestionId = questionId,
+                        Response1 = message,
+                        Submitter = name,
+                        Time = DateTime.Now
+                    };
+
+                    db.Responses.Add(r);
+                    db.SaveChanges();
+
+                    string nameToSend;
+                    if (session.AnonOn == true)
+                    {
+                        nameToSend = "Anon";
+                    }
+                    else
+                    {
+                        nameToSend = name;
+                    }
+
+                    string time = r.Time.ToShortTimeString();
+
+                    Clients.All.submitReply(nameToSend, message, time, questionId);
 
                 }
 
@@ -72,16 +117,6 @@ namespace AskMeAQuestion.Code
 
                     upvoted.Upvotes += 1;
 
-                    string name;
-                    if (upvoted.Session.AnonOn == true)
-                    {
-                        name = "Anon";
-                    }
-                    else
-                    {
-                        name = upvoted.Account.UserId;
-                    }
-
                     Upvote upvote = new Upvote()
                     {
                         UserId = userId,
@@ -91,7 +126,7 @@ namespace AskMeAQuestion.Code
                     db.Upvotes.Add(upvote);
                     db.SaveChanges();
 
-                    Clients.All.upvoteQuestion(name, upvoted.Question1, questionId, upvoted.Upvotes);
+                    Clients.All.upvoteQuestion(questionId, upvoted.Upvotes);
                 }
             }
         }

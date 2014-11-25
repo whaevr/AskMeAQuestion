@@ -3,30 +3,50 @@
     ViewBag.Title = "Live Feed";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@{Html.RenderAction("GetNavigationForUser", "Home", new { userId = Model.UserId, message = "Live Feed for " + @Model.CourseName, questionCount = Model.CurrentSession.Questions.Count() });}
+@{Html.RenderAction("GetNavigationForUser", "Home", new { userId = Model.UserId, message = "Live Feed: " + @Model.CourseName, questionCount = Model.CurrentSession.Questions.Count() });}
 <link href="~/css/live-feed.css" rel="stylesheet">
 <style>
     body, html {
         height: 100%;
     }
-    textarea{
+
+    textarea {
         margin-left: auto;
         margin-right: auto;
     }
+
     #Ask {
         display: none;
     }
-    #message {
-        width: 100%;
-    }
-    #pastQuestions {
+
+    #Reply {
         display: none;
+    }
+    #replies li {
+        padding-left: 2em;
+    }
+
+    .grey {
+        background-color: rgba(212, 212, 212, 1);
+
+    }
+
+    .white {
+        background-color: rgba(236, 236, 236, 1);
+    }
+
+    #pastbuestions {
+       ;display: none;
         overflow-y: scroll;
         position: relative;
         height: 65em;
     }
+
     .control-label {
         font-weight: 100;
+    }
+    .message {
+        width: 100%;
     }
     .panel-heading {
         -moz-user-select: -moz-none;
@@ -35,6 +55,7 @@
         -ms-user-select: none;
         user-select: none;
     }
+
     .clicked {
         color: red;
     }
@@ -43,33 +64,51 @@
         font-style: italic;
         font-weight: 100;
     }
+
     .ui-widget-header {
         background: #222;
         border: 1px solid #080808;
     }
+
     .btn-primary {
         background-color: #999;
+    }
+    .well label {
+        font-size: small;
     }
 </style>
 
 <div class="container">
 
-    <div id="Ask" title="Ask Question!" class="well" >
+    <div id="Ask" title="Ask Question!" class="well">
         <form class="form-horizontal">
-                <h4>Post a new Question</h4>
-                <div class="row">
-                    <textarea cols="20" rows="5" id="message"></textarea>
-                </div>
+            <h4>Post a new Question</h4>
+            <div class="row">
+                <textarea cols="20" rows="5" class="message" id="message"></textarea>
+            </div>
             <label class="control-label">Close window on submit</label> <input id="chkClose" type="checkbox" checked="checked" />
             <input type="button" id="sendmessage" class="btn btn-primary" style="margin-left: 1em" value="Ask" />
             <input type="hidden" id="displayname" />
         </form>
     </div>
 
+    <div id="Reply" title="Reply" class="well">
+        <form class="form-horizontal">
+            <h4>Post Reply</h4>
+            <div class="row">
+                <textarea cols="20" rows="5" class="message" id="replyMessage"></textarea>
+            </div>
+            <label class="control-label">Close window on submit</label> <input id="chkCloseReply" type="checkbox" checked="checked" />
+            <input type="button" id="sendReply" class="btn btn-primary" style="margin-left: 1em" value="Reply" />
+            <input type="hidden" id="displaynameReply" />
+            <input type="hidden" id="replyTo" />
+        </form>
+    </div>
+
     <div class="form-group row">
         <button id="askQuestion" class="btn btn-primary">Ask!</button>
         @if (Model.CurrentSession.Questions.Count() > 0)
-        { <button id="sessionHistory" class="btn btn-primary">View today's session history</button>}
+        { <button id="sessionHistory" class="btn btn-primary">View Today's Session History</button>}
     </div>
 
     <div class="form-group row">
@@ -77,49 +116,63 @@
     </div>
 
     @if (Model.CurrentSession.Questions.Count() > 0)
-{
-    
-    <div class="form-group row">
-        <ul id="pastQuestions" class="list-unstyled col-md-6">
-            <li><h3>Past Questions</h3></li>
-            @foreach (var question in Model.CurrentSession.Questions.OrderByDescending(x => x.QuestionId))
-            {
-                <li class="panel panel-default row">
-                    <div class="unselectable panel-heading">@question.Upvotes
-                        <i class="glyphicon glyphicon-arrow-up"></i> 
-                        <strong>@question.Submitter</strong><span class="italic"> asked on @question.SubmissionDateTime</span>
+    {
+        <div class="form-group row">
+            <ul id="pastQuestions" class="list-unstyled col-md-6">
+                <li><h3>Past Questions & Responses</h3></li>
+                @foreach (var question in Model.CurrentSession.Questions.OrderByDescending(x => x.QuestionId))
+                {
+                    <li id="@question.QuestionId" class="panel panel-default row">
+                    <div class="unselectable panel-heading">
+                        <span id="upvotes">@question.Upvotes</span>
+                        <i class="glyphicon glyphicon-arrow-up"></i>
+                        <strong>@question.Submitter</strong><span class="italic"> asked at @question.SubmissionDateTime.ToShortTimeString()</span>
                     </div>
                     <div class="panel-body">@question.Question</div>
-                </li>
-            }
-        </ul>
-    </div>
-}
+                        <ul id="replies" class="list-unstyled">
+                            @foreach (var reply in question.Replies)
+                            {
+                                <li class="@((question.Replies.IndexOf(reply) % 2) != 0 ? "white": "grey")">
+                                    <div>
+                                        <strong>@reply.Submitter</strong> <span class="italic">replied at @reply.Time.ToShortTimeString()</span>
+                                    </div>
+                                    @reply.Response1
+                                </li>
+                            }
+                        </ul>
+
+                    </li>
+                }
+            </ul>
+        </div>
+    }
 
 </div>
 
 <script src="~/signalr/hubs" type="text/javascript"></script>
-<script type="text/javascript">    
+<script type="text/javascript">
     $(document).ready(function () {
         // Declare a proxy to reference the hub.
         var chat = $.connection.liveFeed;
         // Create a function that the hub can call to broadcast messages.
-        chat.client.broadcastMessage = function (name, message, id, upvotes) {
+        chat.client.broadcastMessage = function (name, message, time, id, upvotes) {
             // Html encode display name and message.
             var encodedName = $('<div />').text(name).html();
             var encodedMsg = $('<div />').text(message).html();
             // Add the message to the page.
-            $('#discussion').prepend('<li id = ' + id + ' class="panel panel-default row"><div class="unselectable panel-heading">' + upvotes + '<i class="glyphicon glyphicon-arrow-up"></i>&nbsp<strong>' +
-                encodedName + '</strong> <span class="italic">has asked</span></div><div class="panel-body">' + encodedMsg + '</div></li>');
+            $('#discussion').prepend('<li id="' + id + '" class="panel panel-default row"><div class="unselectable panel-heading"><span id="upvotes">' + upvotes + '</span><i class="glyphicon glyphicon-arrow-up"></i>&nbsp<strong>' +
+                encodedName + '</strong> <span class="italic">just asked at ' + time + '</span></div><div class="panel-body">' + encodedMsg + '<button id="' + id + '" class="btn btn-primary pull-right postReply">Reply</button></div><ul id="replies" class="list-unstyled"></ul></li>');
         };
 
-         
-        chat.client.upvoteQuestion = function (name, message, id, upvotes) {
-            var encodedName = $('<div />').text(name).html();
-            var encodedMsg = $('<div />').text(message).html();
-            var newText = '<div class="unselectable panel-heading">' + upvotes + '<i class= "glyphicon glyphicon-arrow-up"></i>&nbsp<strong>' +
-                encodedName + '</strong> <span class="italic">has asked</span></div><div class="panel-body">' + encodedMsg + '</div>';
-            $('#' + id).html(newText);
+        chat.client.submitReply = function (name, message, time, questionId) {
+            var alternate = $('#' + questionId).find("#replies").children().length;
+            var bgClass = ((alternate % 2) !== 0) ? "white" : "grey";
+            $('#' + questionId).find("#replies").append('<li class="' + bgClass + '"><div><strong>' + name + '</strong> <span class="italic">replied at ' + time + '</span></div>' + message + '</li>');
+        };
+
+
+        chat.client.upvoteQuestion = function (questionId, upvotes) {
+            $('#' + questionId).find("#upvotes").text(upvotes);
         };
 
         $("#sessionHistory").click(function () {
@@ -147,7 +200,19 @@
                     $('#message').val('');
                 } else {
                     $('#message').val('').focus();
-                }               
+                }
+            });
+
+            $(document.body).on('click', '#sendReply', function () {
+                // Call the Send method on the hub.
+                chat.server.sendReply('@Model.UserId', $('#replyMessage').val(), '@Model.CourseDesignator', $("#replyTo").val());
+                // Clear text box and reset focus for next comment.
+                if ($('#chkCloseReply').is(':checked')) {
+                    $("#Reply").dialog("close");
+                    $('#replyMessage').val('');
+                } else {
+                    $('#replyMessage').val('').focus();
+                }
             });
 
             $(document).on('click', '.glyphicon-arrow-up', function () {

@@ -30,8 +30,24 @@
                     duration: 500
                 }
             });
+            $("#Reply").dialog({
+                autoOpen: false,
+                draggable: true,
+                show: {
+                    effect: "clip",
+                    duration: 500
+                },
+                hide: {
+                    effect: "scale",
+                    duration: 500
+                }
+            });
             $("#askQuestion").click(function () {
                 $("#Ask").dialog("open");
+            });
+            $(document.body).on('click', '.postReply', function () {
+                $("#replyTo").val($(this).attr("id"));
+                $("#Reply").dialog("open");
             });
         });
     </script>

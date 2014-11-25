@@ -3,16 +3,25 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @{Html.RenderAction("GetNavigationForUser", "Home", new { userId = Model.UserId });}
-<h2>@Model.CourseName Course History</h2>
+<style type="text/css">
+    .white {
+        background-color: rgba(236, 236, 236, 1);
+    }
+    .grey {
+        background-color: rgba(212, 212, 212, 1);
+    }
+</style>
+
 
 @if (Model.Sessions.Count() > 0)
 {
-<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+<div class="container panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    <h2>@Model.CourseName Course History</h2>
     @foreach (var session in Model.Sessions)
     {
         if (session.Questions.Count() > 0)
         {
-        <div class="panel panel-default">
+        <div class="panel panel-default row">
             <div class="panel-heading" role="tab" id="headingOne">
                 <h4 class="panel-title">
                     <a data-toggle="collapse" data-parent="#accordion" href="@session.SessionId" aria-expanded="true" aria-controls="@session.SessionId">
@@ -25,10 +34,34 @@
 
                     @foreach (var question in session.Questions)
                     {
-                    <li class="list-group-item">@question.Upvotes <i class="glyphicon glyphicon-arrow-up"></i> <strong>@question.Submitter</strong><em> asked </em> @question.Question</li>
+                        <li class="list-group-item row">
+                            <div>
+                                <span style="padding-left: .3em;">@question.Upvotes</span> <i class="glyphicon glyphicon-arrow-up"></i> <strong>@question.Submitter</strong><em> asked on @question.SubmissionDateTime.ToShortTimeString() </em>
+                            </div>
+                            <div style="padding-left: 2.5em;">
+                                @question.Question
+                            </div>
+                            @if (question.Replies.Count() > 0)
+                            {
+                                <ul class="list-group row">
+                                    @foreach (var reply in question.Replies)
+                                    {
+                                        <li style="padding-left: 2em;" class="list-group-item @((question.Replies.IndexOf(reply) %2) != 0 ? "white" : "grey")">
+                                            <div>
+                                                <strong>@reply.Submitter</strong><em> replied on @reply.Time.ToShortTimeString() </em>
+                                            </div>
+                                            <div style="padding-left: 3.5em;">
+                                                @reply.Response1
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </li>
                     }
                 </ul>
             </div>
+
         </div>
 }
     }
@@ -36,5 +69,8 @@
 }
 else
 {
-    <p>No Sessions have been made yet</p>
+    <div class="container">
+        <h2>@Model.CourseName Course History</h2>
+        <p>No Sessions have been made yet</p>
+    </div>
 }

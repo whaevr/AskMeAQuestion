@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="simmo2jjModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="simmo2jjModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Accounts">
           <Key>
             <PropertyRef Name="UserId" />
@@ -39,13 +39,24 @@
           <Key>
             <PropertyRef Name="QuestionId" />
           </Key>
-          <Property Name="QuestionId" Type="int" Nullable="false" />
+          <Property Name="QuestionId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Question" Type="varchar" MaxLength="200" Nullable="false" />
           <Property Name="Submitter" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="Time" Type="datetime" Nullable="false" />
           <Property Name="SessionId" Type="int" Nullable="false" />
           <Property Name="Status" Type="varchar" MaxLength="10" />
           <Property Name="Upvotes" Type="int" />
+        </EntityType>
+        <EntityType Name="Response">
+          <Key>
+            <PropertyRef Name="ResponseId" />
+          </Key>
+          <Property Name="ResponseId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="QuestionId" Type="int" Nullable="false" />
+          <Property Name="Response" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="Submitter" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="Time" Type="datetime" Nullable="false" />
+          <Property Name="Status" Type="varchar" MaxLength="10" />
         </EntityType>
         <EntityType Name="Session">
           <Key>
@@ -124,6 +135,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Response_Response">
+          <End Role="Question" Type="Self.Question" Multiplicity="1" />
+          <End Role="Response" Type="Self.Response" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Question">
+              <PropertyRef Name="QuestionId" />
+            </Principal>
+            <Dependent Role="Response">
+              <PropertyRef Name="QuestionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Session_Course">
           <End Role="Course" Type="Self.Course" Multiplicity="1" />
           <End Role="Session" Type="Self.Session" Multiplicity="*" />
@@ -141,6 +164,7 @@
           <EntitySet Name="ClassList" EntityType="Self.ClassList" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Course" EntityType="Self.Course" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Question" EntityType="Self.Question" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Response" EntityType="Self.Response" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Session" EntityType="Self.Session" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Upvote" EntityType="Self.Upvote" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_ClassList_Accounts" Association="Self.FK_ClassList_Accounts">
@@ -162,6 +186,10 @@
           <AssociationSet Name="FK_Question_Session" Association="Self.FK_Question_Session">
             <End Role="Session" EntitySet="Session" />
             <End Role="Question" EntitySet="Question" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Response_Response" Association="Self.FK_Response_Response">
+            <End Role="Question" EntitySet="Question" />
+            <End Role="Response" EntitySet="Response" />
           </AssociationSet>
           <AssociationSet Name="FK_Session_Course" Association="Self.FK_Session_Course">
             <End Role="Course" EntitySet="Course" />
@@ -203,6 +231,11 @@
             <End Role="Question" EntitySet="Questions" />
           </AssociationSet>
           <EntitySet Name="Upvotes" EntityType="simmo2jjModel.Upvote" />
+          <EntitySet Name="Responses" EntityType="simmo2jjModel.Response" />
+          <AssociationSet Name="FK_Response_Response" Association="simmo2jjModel.FK_Response_Response">
+            <End Role="Question" EntitySet="Questions" />
+            <End Role="Response" EntitySet="Responses" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Account">
           <Key>
@@ -255,6 +288,7 @@
           <Property Name="Upvotes" Type="Int32" />
           <NavigationProperty Name="Account" Relationship="simmo2jjModel.FK_Question_Accounts" FromRole="Question" ToRole="Account" />
           <NavigationProperty Name="Session" Relationship="simmo2jjModel.FK_Question_Session" FromRole="Question" ToRole="Session" />
+          <NavigationProperty Name="Responses" Relationship="simmo2jjModel.FK_Response_Response" FromRole="Question" ToRole="Response" />
         </EntityType>
         <EntityType Name="Session">
           <Key>
@@ -347,6 +381,30 @@
           <Property Name="UserId" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="QuestionId" Type="Int32" Nullable="false" />
         </EntityType>
+        <EntityType Name="Response">
+          <Key>
+            <PropertyRef Name="ResponseId" />
+          </Key>
+          <Property Name="ResponseId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="QuestionId" Type="Int32" Nullable="false" />
+          <Property Name="Response1" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Submitter" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Time" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Status" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Question" Relationship="simmo2jjModel.FK_Response_Response" FromRole="Response" ToRole="Question" />
+        </EntityType>
+        <Association Name="FK_Response_Response">
+          <End Type="simmo2jjModel.Question" Role="Question" Multiplicity="1" />
+          <End Type="simmo2jjModel.Response" Role="Response" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Question">
+              <PropertyRef Name="QuestionId" />
+            </Principal>
+            <Dependent Role="Response">
+              <PropertyRef Name="QuestionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -413,6 +471,18 @@
               <MappingFragment StoreEntitySet="Upvote">
                 <ScalarProperty Name="QuestionId" ColumnName="QuestionId" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Responses">
+            <EntityTypeMapping TypeName="simmo2jjModel.Response">
+              <MappingFragment StoreEntitySet="Response">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Submitter" ColumnName="Submitter" />
+                <ScalarProperty Name="Response1" ColumnName="Response" />
+                <ScalarProperty Name="QuestionId" ColumnName="QuestionId" />
+                <ScalarProperty Name="ResponseId" ColumnName="ResponseId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

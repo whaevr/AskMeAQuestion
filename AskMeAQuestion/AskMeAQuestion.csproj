@@ -177,6 +177,9 @@
     <Compile Include="Models\Question.cs">
       <DependentUpon>AskMeAQuestionModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Response.cs">
+      <DependentUpon>AskMeAQuestionModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Session.cs">
       <DependentUpon>AskMeAQuestionModel.tt</DependentUpon>
     </Compile>
@@ -244,6 +247,7 @@
     <Content Include="Content\themes\base\tooltip.css" />
     <Content Include="css\landing-page.css" />
     <Content Include="css\live-feed.css" />
+    <Content Include="css\mobile.css" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <EntityDeploy Include="Models\AskMeAQuestionModel.edmx">

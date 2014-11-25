@@ -31,5 +31,6 @@ namespace AskMeAQuestion.Models
         public DbSet<Question> Questions { get; set; }
         public DbSet<Session> Sessions { get; set; }
         public DbSet<Upvote> Upvotes { get; set; }
+        public DbSet<Response> Responses { get; set; }
     }
 }

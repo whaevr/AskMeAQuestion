@@ -4,7 +4,7 @@
 }
 
 @{Html.RenderAction("GetNavigationForUser", "Home", new { userId = Model.UserId, message = "Welcome back! " + Model.UserName });}
-
+<link href="~/css/mobile.css" rel="stylesheet" />
 <div class="container">
     @using (Html.BeginForm("UserInterface", "Home", FormMethod.Post, new { enctype = "multi-part/form-data" }))
     {
@@ -15,7 +15,8 @@
             <div class="col-md-2">
                 @Html.DropDownListFor(x => x.CourseAdded, new SelectList(Model.Courses, "Value", "Text"), "--Select Class--", new { @class = "form-control" })
             </div>
-            <button type="submit" class="btn btn-default">Add Course</button>
+
+            <div class="col-md-2"><button type="submit" class="btn btn-default">Add Course</button></div>
         </div>
 
     }
@@ -32,7 +33,7 @@
             <div class="panel-heading"><h4>My Classes</h4></div>
             <table class="table">
                 <tr>
-                    <th>
+                    <th class="mobile-hide">
                         Name
                     </th>
                     <th>
@@ -60,7 +61,7 @@
                 @foreach (var course in Model.UserCourseList)
                 {
                     <tr>
-                        <td>
+                        <td class="mobile-hide">
                             @course.CourseName
                         </td>
                         <td>
@@ -97,15 +98,15 @@
 
                             </td>
                             <td>
-                            @if (course.OpenSession && course.AnonOn)
-                            {
-                               @Html.ActionLink("Anon: On (Turn off)", "AnonOn", "Home", new { id = course.SectionId, userId = Model.UserId, setting = "Off" }, null);
-                            }
-                            else if(course.OpenSession)
-                            {
-                               @Html.ActionLink("Anon: Off (Turn on)", "AnonOn", "Home", new { id = course.SectionId, userId = Model.UserId, setting = "On" }, null);
+                                @if (course.OpenSession && course.AnonOn)
+                                {
+                                    @Html.ActionLink("Anon: On (Turn off)", "AnonOn", "Home", new { id = course.SectionId, userId = Model.UserId, setting = "Off" }, null);
+                                }
+                                else if (course.OpenSession)
+                                {
+                                    @Html.ActionLink("Anon: Off (Turn on)", "AnonOn", "Home", new { id = course.SectionId, userId = Model.UserId, setting = "On" }, null);
 
-                            }
+                                }
                             </td>
                         }
                     </tr>
