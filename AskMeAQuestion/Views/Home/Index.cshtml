@@ -41,21 +41,23 @@
                         </p>
                     </div>
                     <hr class="intro-divider" />
-                    <div class="form-group row">
-                        <span class="col-md-offset-4 col-md-1 glyphicon glyphicon-user"></span>
-                        <div class="col-md-3 form-input">
-                            @Html.TextBoxFor(x => x.UserName, new { placeholder = "User Name", @class = "form-control" })
-                            @Html.ValidationMessageFor(x => x.UserName)
+                    <form class="form-horizontal">
+                        <div class="form-group row">
+                            <span class="col-md-offset-4 col-md-1 glyphicon glyphicon-user"></span>
+                            <div class="col-md-3 form-input">
+                                @Html.TextBoxFor(x => x.UserName, new { placeholder = "User Name", @class = "form-control" })
+                                @Html.ValidationMessageFor(x => x.UserName)
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group row">
-                        <span class="col-md-offset-4 col-md-1 glyphicon glyphicon-lock"></span>
-                        <div class="col-md-3 form-input">
-                            @Html.PasswordFor(x => x.Password, new { placeholder = "Password", @class = "form-control" })
-                            @Html.ValidationMessageFor(x => x.Password)
+                        <div class="form-group row">
+                            <span class="col-md-offset-4 col-md-1 glyphicon glyphicon-lock"></span>
+                            <div class="col-md-3 form-input">
+                                @Html.PasswordFor(x => x.Password, new { placeholder = "Password", @class = "form-control" })
+                                @Html.ValidationMessageFor(x => x.Password)
+                            </div>
                         </div>
-                    </div>
-                    <button type="submit" class="btn btn-default">Log in</button>
+                        <input type="submit" class="btn btn-default" value="Login" />
+                    </form>
                 </div>
             </fieldset>
     </div>

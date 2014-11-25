@@ -35,7 +35,7 @@
         background-color: rgba(236, 236, 236, 1);
     }
 
-    #pastbuestions {
+    #pastQuestions {
        ;display: none;
         overflow-y: scroll;
         position: relative;
@@ -188,7 +188,7 @@
             $('#displayname').val('@Model.UserId');
         }
         // Set initial focus to message input box.
-        $('#message').focus();
+        $('#message').focus
         // Start the connection.
         $.connection.hub.start().done(function () {
             $('#sendmessage').click(function () {

@@ -35,10 +35,6 @@ h6 {
    
 }
 
-.btn {
-    display: none;
-}
-
 @media (max-width:767px) {
     .btn {
         display: block;
