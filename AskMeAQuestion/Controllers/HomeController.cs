@@ -326,7 +326,7 @@ namespace AskMeAQuestion.Controllers
                                                  c.Date == DateTime.Today
                                                  select c;
 
-                            if (currentSession != null)
+                            if (currentSession.Count() > 0)
                             {
                                 addCourse.OpenSession = true;
                                 addCourse.AnonOn = (bool)currentSession.First().AnonOn;
